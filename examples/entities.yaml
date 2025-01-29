@@ -35,6 +35,7 @@ spec:
   system: examples
   providesApis: [service-api]
 ---
+
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
 apiVersion: backstage.io/v1alpha1
 kind: API
@@ -76,3 +77,18 @@ spec:
     message ExampleMessage {
       string example = 1;
     };
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: example
+  description: The place to be, for great example
+  metadata:
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: examples
