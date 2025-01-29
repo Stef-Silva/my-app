@@ -61,12 +61,22 @@ proxy:
 # Note: After experimenting with basic setup, use CI/CD to generate docs
 # and an external cloud storage when deploying TechDocs for production use-case.
 # https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
+
+#techdocs:
+#  publisher:
+#    type: 'azureBlobStorage'
+#    azureBlobStorage:
+#      containerName: ${TECHDOCS_AZURE_BLOB_STORAGE_CONTAINER_NAME}
+#      credentials:
+#        accountName: ${AZURE_STORAGE_ACCOUNT}
+#        accountKey: ${AZURE_STORAGE_KEY}
+
 techdocs:
-  builder: 'local' # Alternatives - 'external'
-  generator:
-    runIn: 'docker' # Alternatives - 'local'
+  builder: 'local'
   publisher:
-    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+    type: 'local'
+  generator:
+    runIn: local
 
 auth:
   environment: development
@@ -92,6 +102,10 @@ catalog:
   rules:
     - allow: [Component, System, API, Resource, Location]
   locations:
+    # - Own repo entity
+    - type: file
+      target: ../../catalog-info.yaml
+
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
       target: ../../examples/entities.yaml
@@ -119,7 +133,14 @@ catalog:
     #     - allow: [User, Group]
 
 kubernetes:
-  # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
+  serviceLocatorMethod:
+    type: 'singleTenant'
+  clusterLocatorMethods:
+    - type: 'localKubectlProxy'
+      clusters:
+        - url: http://127.0.0.1:8001
+          name: local-k8s          
+          title: 'My Local Kubernetes Cluster Number One'
 
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
 permission:
